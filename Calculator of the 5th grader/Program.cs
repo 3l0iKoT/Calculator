@@ -14,22 +14,39 @@ namespace Calculator_of_the_5th_grader
         static void Main(string[] args)
         {
             int menuItem = 1;
-            string key = "";
+            bool exitApp = false;
             while (true)
             {
                 Menu(menuItem);
-                key = WaitKey(key, new[] { "UpArrow", "DownArrow", "Enter" });
-                if (key == "UpArrow")
-                    menuItem = menuItem == 1 ? 6 : menuItem - 1;
-                else if (key == "DownArrow")
-                    menuItem = menuItem == 6 ? 1 : menuItem + 1;
-                else if (key == "Enter")
+                switch (WaitKey(new[] { "UpArrow", "DownArrow", "Enter" }))
                 {
-                    if (menuItem == 1)
-                        NumberSystem();
-                    if (menuItem == 6)
+                    case "UpArrow":
+                        menuItem = menuItem == 1 ? 6 : menuItem - 1;
+                        break;
+                    case "DownArrow":
+                        menuItem = menuItem == 6 ? 1 : menuItem + 1;
+                        break;
+                    case "Enter":
+                        switch (menuItem)
+                        {
+                            case 1:
+                                NumberSystem();
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                break;
+                            case 5:
+                                break;
+                            case 6:
+                                exitApp = true;
+                                break;
+                        }
                         break;
                 }
+                if (exitApp) break;
             }
         }
 
@@ -68,8 +85,9 @@ namespace Calculator_of_the_5th_grader
             return correctNumber == number.Length;
         }
 
-        static string WaitKey(string key, string[] keys)
+        static string WaitKey(string[] keys)
         {
+            string key;
             do
             {
                 key = Console.ReadKey().Key.ToString();
@@ -81,7 +99,6 @@ namespace Calculator_of_the_5th_grader
         {
             bool exit = false;
             bool restart = false;
-            string key = "";
             while (true)
             {
                 Console.Clear();
@@ -158,7 +175,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine($"Для начала переведём число из {numberSystem1} СС в 10 СС");
                 else
                     Console.WriteLine($"Переведём число из 10 СС в {numberSystem2}");
-                key = WaitKey(key, new[] {"Q", "R", "Enter"});
+                string key = WaitKey(new[] {"Q", "R", "Enter"});
                 if (key == "Q")
                     break;
                 else if (key == "R")
@@ -176,7 +193,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                     Console.WriteLine($"\n{number}");
                     Console.WriteLine($"\nИзбавимся от 0 в начале");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -197,7 +214,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine($"\n{ShowList(digitNumber, " ")}\n{number}");
                     Console.WriteLine($"\nНапишем над числом разряды цифр числа следующим образом");
                     Console.WriteLine($"Следующим шагом нам необходимо найти сумму произведений цифр числа на его основание в степени разряда.\r\nЕсли какая-то цифра числа будет например 'a' то думаем, какое число оно должно заменить, так как в нашем алфавите ({ShowList(Alphabet(50), ", ")}) 'a' идёт после 9, то 'a' будет 10.\r\nb - 11, A - 36, N - 49");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -211,7 +228,7 @@ namespace Calculator_of_the_5th_grader
                         Console.WriteLine($"\n{ShowList(digitNumber, " ")}\n{number}_{numberSystem1} = {solution}");
                         Console.WriteLine($"\nДобавляем произведение цифры под {digitNumber[i]} разрядом числа на его основание в степени разряда этой цифры");
                         solution += " + ";
-                        key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                        key = WaitKey(new[] { "Q", "R", "Enter" });
                         if (key == "Q")
                         {
                             exit = true;
@@ -231,7 +248,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                     Console.WriteLine($"\n{ShowList(digitNumber, " ")}\n{number}_{numberSystem1} = {solution.Substring(0, solution.Length - 3)} = {result10}_10");
                     Console.WriteLine($"\nРезультатом вычисления этого выражения будет переводом числа {number} из {numberSystem1} СС в 10 СС");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -243,7 +260,7 @@ namespace Calculator_of_the_5th_grader
                         Console.WriteLine($"\nТак как нам нужно было перевести только в 10 СС, то это и является ответом");
                         Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                         Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
-                        key = WaitKey(key, new[] { "Q", "R" });
+                        key = WaitKey(new[] { "Q", "R" });
                         if (key == "Q")
                             break;
                         else if (key == "R")
@@ -252,7 +269,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                     Console.WriteLine($"\n{result10}_10\n");
                     Console.WriteLine($"Теперь переведём число из 10 СС в {numberSystem2} СС");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -271,7 +288,7 @@ namespace Calculator_of_the_5th_grader
                 Console.WriteLine($"{result} - Результат");
                 Console.WriteLine($"\nНайдём остаток и целую часть от деления на основание СС, на которую нам нужно перевести число.\r\nОстаток сохраняем, дописывая в начало числа, показывающего результат.\r\nОстаток получился {remainder}, значит приписываем к результату {alphabet2[remainder]}");
                 Console.WriteLine($"По нашему алфавиту ({ShowList(Alphabet(50), ", ")}) такие числа как 10 или 11 могут быть записаны символами 'a' или 'b'.\r\n10 - a, 11 - b, 36 - A, 49 - N");
-                key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                key = WaitKey(new[] { "Q", "R", "Enter" });
                 if (key == "Q")
                     break;
                 else if (key == "R")
@@ -283,12 +300,12 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine($"\n{intPart} % {numberSystem2} = {remainder}");
                     result = alphabet2[remainder].ToString() + result;
                     Console.WriteLine($"{intPart} / {numberSystem2} = {intPart / numberSystem2}");
-                    intPart = intPart / numberSystem2;
+                    intPart /= numberSystem2;
                     Console.WriteLine($"{result}");
                     Console.WriteLine($"\nОстаток получился {remainder}, значит приписываем к результату {alphabet2[remainder]}");
                     if (intPart == 0)
                         Console.WriteLine($"Остаток получился 0, значит ответом будет {result}");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                     {
                         exit = true;
@@ -307,7 +324,7 @@ namespace Calculator_of_the_5th_grader
                 Console.WriteLine($"\nЭто число является результатом перевода числа {number} из {numberSystem1} СС в {numberSystem2} СС");
                 Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                 Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
-                key = WaitKey(key, new[] { "Q", "R" });
+                key = WaitKey(new[] { "Q", "R" });
                 if (key == "Q")
                     break;
             }
