@@ -35,6 +35,7 @@ namespace Calculator_of_the_5th_grader
                             case 2:
                                 break;
                             case 3:
+                                Addition();
                                 break;
                             case 4:
                                 break;
@@ -324,6 +325,78 @@ namespace Calculator_of_the_5th_grader
                 Console.WriteLine($"\nЭто число является результатом перевода числа {number} из {numberSystem1} СС в {numberSystem2} СС");
                 Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                 Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
+                key = WaitKey(new[] { "Q", "R" });
+                if (key == "Q")
+                    break;
+            }
+        }
+
+        static void Addition()
+        {
+            string key;
+            int numberSystem;
+            string number1;
+            string number2;
+            List<char> alphabet;
+            while (true)
+            {
+                Console.Clear();
+                if (!int.TryParse(Console.ReadLine(), out numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Число введено не корректно");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (numberSystem < 2 || numberSystem > 50)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Система счисления должна быть в диапозоне от 2 до 50. {numberSystem} не в диапозоне [2; 50]");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                alphabet = Alphabet(numberSystem);
+
+                Console.WriteLine($"Введите первое число используя алфавит: ({ShowList(alphabet, ", ")})");
+                number1 = Console.ReadLine();
+                if (string.IsNullOrEmpty(number1))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Введено пустое число");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (!CorrectNumber(number1, numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Число {number1} использует цифры не из алфавита\n({ShowList(alphabet, ", ")})");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                Console.WriteLine($"Введите второе число используя алфавит: ({ShowList(alphabet, ", ")})");
+                number2 = Console.ReadLine();
+                if (string.IsNullOrEmpty(number2))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Введено пустое число");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (!CorrectNumber(number2, numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Число {number2} использует цифры не из алфавита\n({ShowList(alphabet, ", ")})");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+
                 key = WaitKey(new[] { "Q", "R" });
                 if (key == "Q")
                     break;
