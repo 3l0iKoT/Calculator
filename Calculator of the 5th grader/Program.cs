@@ -174,7 +174,7 @@ namespace Calculator_of_the_5th_grader
                 if (numberSystem1 != 10)
                     Console.WriteLine($"Для начала переведём число из {numberSystem1} СС в 10 СС");
                 else
-                    Console.WriteLine($"Переведём число из 10 СС в {numberSystem2}");
+                    Console.WriteLine($"Переведём число из 10 СС в {numberSystem2} СС");
                 string key = WaitKey(new[] {"Q", "R", "Enter"});
                 if (key == "Q")
                     break;
