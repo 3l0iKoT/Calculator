@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Numerics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Calculator_of_the_5th_grader
 {
@@ -14,22 +15,40 @@ namespace Calculator_of_the_5th_grader
         static void Main(string[] args)
         {
             int menuItem = 1;
-            string key = "";
+            bool exitApp = false;
             while (true)
             {
                 Menu(menuItem);
-                key = WaitKey(key, new[] { "UpArrow", "DownArrow", "Enter" });
-                if (key == "UpArrow")
-                    menuItem = menuItem == 1 ? 6 : menuItem - 1;
-                else if (key == "DownArrow")
-                    menuItem = menuItem == 6 ? 1 : menuItem + 1;
-                else if (key == "Enter")
+                switch (WaitKey(new[] { "UpArrow", "DownArrow", "Enter" }))
                 {
-                    if (menuItem == 1)
-                        NumberSystem();
-                    if (menuItem == 6)
+                    case "UpArrow":
+                        menuItem = menuItem == 1 ? 6 : menuItem - 1;
+                        break;
+                    case "DownArrow":
+                        menuItem = menuItem == 6 ? 1 : menuItem + 1;
+                        break;
+                    case "Enter":
+                        switch (menuItem)
+                        {
+                            case 1:
+                                NumberSystem();
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                Addition();
+                                break;
+                            case 4:
+                                break;
+                            case 5:
+                                break;
+                            case 6:
+                                exitApp = true;
+                                break;
+                        }
                         break;
                 }
+                if (exitApp) break;
             }
         }
 
@@ -68,8 +87,9 @@ namespace Calculator_of_the_5th_grader
             return correctNumber == number.Length;
         }
 
-        static string WaitKey(string key, string[] keys)
+        static string WaitKey(string[] keys)
         {
+            string key;
             do
             {
                 key = Console.ReadKey().Key.ToString();
@@ -80,10 +100,9 @@ namespace Calculator_of_the_5th_grader
         static void NumberSystem()
         {
             bool exit = false;
-            bool restart = false;
-            string key = "";
             while (true)
             {
+                bool restart = false;
                 Console.Clear();
                 Console.WriteLine("Введите систему счисления для числа в диапозоне от 2 до 50");
                 if (!int.TryParse(Console.ReadLine(), out int numberSystem1))
@@ -157,8 +176,8 @@ namespace Calculator_of_the_5th_grader
                 if (numberSystem1 != 10)
                     Console.WriteLine($"Для начала переведём число из {numberSystem1} СС в 10 СС");
                 else
-                    Console.WriteLine($"Переведём число из 10 СС в {numberSystem2}");
-                key = WaitKey(key, new[] {"Q", "R", "Enter"});
+                    Console.WriteLine($"Переведём число из 10 СС в {numberSystem2} СС");
+                string key = WaitKey(new[] {"Q", "R", "Enter"});
                 if (key == "Q")
                     break;
                 else if (key == "R")
@@ -176,7 +195,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                     Console.WriteLine($"\n{number}");
                     Console.WriteLine($"\nИзбавимся от 0 в начале");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -197,7 +216,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine($"\n{ShowList(digitNumber, " ")}\n{number}");
                     Console.WriteLine($"\nНапишем над числом разряды цифр числа следующим образом");
                     Console.WriteLine($"Следующим шагом нам необходимо найти сумму произведений цифр числа на его основание в степени разряда.\r\nЕсли какая-то цифра числа будет например 'a' то думаем, какое число оно должно заменить, так как в нашем алфавите ({ShowList(Alphabet(50), ", ")}) 'a' идёт после 9, то 'a' будет 10.\r\nb - 11, A - 36, N - 49");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -211,7 +230,7 @@ namespace Calculator_of_the_5th_grader
                         Console.WriteLine($"\n{ShowList(digitNumber, " ")}\n{number}_{numberSystem1} = {solution}");
                         Console.WriteLine($"\nДобавляем произведение цифры под {digitNumber[i]} разрядом числа на его основание в степени разряда этой цифры");
                         solution += " + ";
-                        key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                        key = WaitKey(new[] { "Q", "R", "Enter" });
                         if (key == "Q")
                         {
                             exit = true;
@@ -231,7 +250,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                     Console.WriteLine($"\n{ShowList(digitNumber, " ")}\n{number}_{numberSystem1} = {solution.Substring(0, solution.Length - 3)} = {result10}_10");
                     Console.WriteLine($"\nРезультатом вычисления этого выражения будет переводом числа {number} из {numberSystem1} СС в 10 СС");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -243,7 +262,7 @@ namespace Calculator_of_the_5th_grader
                         Console.WriteLine($"\nТак как нам нужно было перевести только в 10 СС, то это и является ответом");
                         Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                         Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
-                        key = WaitKey(key, new[] { "Q", "R" });
+                        key = WaitKey(new[] { "Q", "R" });
                         if (key == "Q")
                             break;
                         else if (key == "R")
@@ -252,7 +271,7 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                     Console.WriteLine($"\n{result10}_10\n");
                     Console.WriteLine($"Теперь переведём число из 10 СС в {numberSystem2} СС");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                         break;
                     else if (key == "R")
@@ -271,7 +290,7 @@ namespace Calculator_of_the_5th_grader
                 Console.WriteLine($"{result} - Результат");
                 Console.WriteLine($"\nНайдём остаток и целую часть от деления на основание СС, на которую нам нужно перевести число.\r\nОстаток сохраняем, дописывая в начало числа, показывающего результат.\r\nОстаток получился {remainder}, значит приписываем к результату {alphabet2[remainder]}");
                 Console.WriteLine($"По нашему алфавиту ({ShowList(Alphabet(50), ", ")}) такие числа как 10 или 11 могут быть записаны символами 'a' или 'b'.\r\n10 - a, 11 - b, 36 - A, 49 - N");
-                key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                key = WaitKey(new[] { "Q", "R", "Enter" });
                 if (key == "Q")
                     break;
                 else if (key == "R")
@@ -283,12 +302,12 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine($"\n{intPart} % {numberSystem2} = {remainder}");
                     result = alphabet2[remainder].ToString() + result;
                     Console.WriteLine($"{intPart} / {numberSystem2} = {intPart / numberSystem2}");
-                    intPart = intPart / numberSystem2;
+                    intPart /= numberSystem2;
                     Console.WriteLine($"{result}");
                     Console.WriteLine($"\nОстаток получился {remainder}, значит приписываем к результату {alphabet2[remainder]}");
                     if (intPart == 0)
                         Console.WriteLine($"Остаток получился 0, значит ответом будет {result}");
-                    key = WaitKey(key, new[] { "Q", "R", "Enter" });
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                     {
                         exit = true;
@@ -307,10 +326,215 @@ namespace Calculator_of_the_5th_grader
                 Console.WriteLine($"\nЭто число является результатом перевода числа {number} из {numberSystem1} СС в {numberSystem2} СС");
                 Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                 Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
-                key = WaitKey(key, new[] { "Q", "R" });
+                key = WaitKey(new[] { "Q", "R" });
                 if (key == "Q")
                     break;
             }
+        }
+
+        static void Addition()
+        {
+            while (true)
+            {
+                bool exit = false;
+                bool restart = false;
+                int numberSystem;
+                string key;
+                Console.Clear();
+                Console.WriteLine("Введите систему счисления для чисел в диапозоне от 2 до 50");
+                if (!int.TryParse(Console.ReadLine(), out numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Число введено не корректно");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (numberSystem < 2 || numberSystem > 50)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Система счисления должна быть в диапозоне от 2 до 50. {numberSystem} не в диапозоне [2; 50]");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                List<char> alphabet = Alphabet(numberSystem);
+
+                Console.WriteLine($"Введите первое число используя алфавит: ({ShowList(alphabet, ", ")})");
+                string number1 = Console.ReadLine();
+                if (string.IsNullOrEmpty(number1))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Введено пустое число");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (!CorrectNumber(number1, numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Число {number1} использует цифры не из алфавита\n({ShowList(alphabet, ", ")})");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                Console.WriteLine($"Введите второе число используя алфавит: ({ShowList(alphabet, ", ")})");
+                string number2 = Console.ReadLine();
+                if (string.IsNullOrEmpty(number2))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Введено пустое число");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (!CorrectNumber(number2, numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Число {number2} использует цифры не из алфавита\n({ShowList(alphabet, ", ")})");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                number1 = number1.PadLeft(number2.Length);
+                number2 = number2.PadLeft(number1.Length);
+
+                string transfers = new string(' ', number2.Length);
+                string result = new string(' ', number2.Length + 1);
+
+                Console.Clear();
+                Console.WriteLine("Q - Вернутся в меню\nR - Начать заново\nEnter - Следующий шаг");
+                Console.WriteLine($"\n  {number1}\n+ {number2}");
+                Console.WriteLine("\nНайдём их сумму столбиком");
+
+                key = WaitKey(new[] { "Q", "R", "Enter" });
+                if (key == "Q")
+                    break;
+                if (key == "R")
+                    continue;
+
+                for (int i = number1.Length - 1; i >= 0; i--)
+                {
+                    (char sum, char transfer) = Sum(transfers[i], number1[i], number2[i], numberSystem);
+                    if (i > 0)
+                    {
+                        transfers = ReplaceCharAtIndex(transfers, i - 1, transfer);
+                        result = ReplaceCharAtIndex(result, i + 1, sum);
+                    }
+                    else
+                    {
+                        result = ReplaceCharAtIndex(result, i + 1, sum);
+                        result = ReplaceCharAtIndex(result, i, transfer);
+                    }
+                    Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                    Console.WriteLine($"\n  {transfers}\n  {number1}\n+ {number2}\n {result}");
+                    if (transfers[i] == ' ')
+                    {
+                        if (number1[i] == ' ' || number2[i] == ' ')
+                            Console.WriteLine($"\nПеренесём в ответ {number2.Length - i}-ый разряд {(number2[i] == ' ' ? "первого" : "второго")} числа");
+                        else
+                            Console.WriteLine($"\nСуммируем {number2.Length - i}-ые разряды чисел. {number1[i]} + {number2[i]} = {transfer}{sum}");
+                    }
+                    else
+                    {
+                        if (number1[i] == ' ' || number2[i] == ' ')
+                            Console.WriteLine($"\nСуммируем перенос и {number2.Length - i}-ый разряд {(number2[i] == ' ' ? "первого" : "второго")} числа. {transfers[i]} + {(number2[i] == ' ' ? number1[i] : number2[i])} = {transfer}{sum}");
+                        else
+                            Console.WriteLine($"\nСуммируем перенос и {number2.Length - i}-ые разряды чисел. {transfers[i]} + {number1[i]} + {number2[i]} = {transfer}{sum}");
+                    }
+
+                    if (transfer == '1')
+                    {
+                        if (i > 0)
+                            Console.WriteLine("\nТак как сумма цифр двухзначная, то второй разряд суммы переносим над следующим разрядом числа");
+                        else
+                            Console.WriteLine("\nТак как сумма цифр двухзначная, а разряд последний, то второй разряд суммы переносим на следующй разряд ответа");
+                    }
+
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
+                    if (key == "Q")
+                    {
+                        exit = true;
+                        break;
+                    }
+                    if (key == "R")
+                    {
+                        restart = true;
+                        break;
+                    }
+                }
+                if (exit)
+                    break;
+                if (restart)
+                    continue;
+
+                Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                Console.WriteLine($"\n{number1.Replace(" ","")} + {number2.Replace(" ","")} = {result.Replace(" ", "")}\n");
+                Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
+                key = WaitKey(new[] { "Q", "R" });
+                if (key == "Q")
+                    break;
+                Console.Clear();
+            }
+        }
+
+        static (char, char) Sum(char transferIn, char number1, char number2, int numberSystem)
+        {
+            char sum;
+            char transferOut = ' ';
+            List<char> alphabet = Alphabet(numberSystem);
+            int indexSum;
+
+            if (transferIn == ' ')
+            {
+                if (number1 == ' ')
+                    sum = number2;
+                else if (number2 == ' ')
+                    sum = number1;
+                else
+                {
+                    indexSum = alphabet.IndexOf(number1) + alphabet.IndexOf(number2);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+            }
+            else
+            {
+                if (number1 == ' ' && number2 == ' ')
+                    sum = transferOut;
+                if (number1 == ' ')
+                {
+                    indexSum = 1 + alphabet.IndexOf(number2);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+                if (number2 == ' ')
+                {
+                    indexSum = 1 + alphabet.IndexOf(number1);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+                else
+                {
+                    indexSum = 1 + alphabet.IndexOf(number1) + alphabet.IndexOf(number2);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+            }
+
+            return (sum, transferOut);
+        }
+
+        static string ReplaceCharAtIndex(string original, int index, char newChar)
+        {
+            char[] chars = original.ToCharArray();
+
+            chars[index] = newChar;
+
+            return new string(chars);
         }
 
         static string ShowList<T>(List<T> list, string split)
