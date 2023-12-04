@@ -481,6 +481,11 @@ namespace Calculator_of_the_5th_grader
             }
         }
 
+        static void Subtraction()
+        {
+
+        }
+
         static (char, char) Sum(char transferIn, char number1, char number2, int numberSystem)
         {
             char sum;
