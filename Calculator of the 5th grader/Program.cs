@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Numerics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Calculator_of_the_5th_grader
 {
@@ -99,9 +100,9 @@ namespace Calculator_of_the_5th_grader
         static void NumberSystem()
         {
             bool exit = false;
-            bool restart = false;
             while (true)
             {
+                bool restart = false;
                 Console.Clear();
                 Console.WriteLine("Введите систему счисления для числа в диапозоне от 2 до 50");
                 if (!int.TryParse(Console.ReadLine(), out int numberSystem1))
@@ -333,14 +334,14 @@ namespace Calculator_of_the_5th_grader
 
         static void Addition()
         {
-            string key;
-            int numberSystem;
-            string number1;
-            string number2;
-            List<char> alphabet;
             while (true)
             {
+                bool exit = false;
+                bool restart = false;
+                int numberSystem;
+                string key;
                 Console.Clear();
+                Console.WriteLine("Введите систему счисления для чисел в диапозоне от 2 до 50");
                 if (!int.TryParse(Console.ReadLine(), out numberSystem))
                 {
                     Console.Clear();
@@ -357,10 +358,10 @@ namespace Calculator_of_the_5th_grader
                     Console.ReadKey();
                     continue;
                 }
-                alphabet = Alphabet(numberSystem);
+                List<char> alphabet = Alphabet(numberSystem);
 
                 Console.WriteLine($"Введите первое число используя алфавит: ({ShowList(alphabet, ", ")})");
-                number1 = Console.ReadLine();
+                string number1 = Console.ReadLine();
                 if (string.IsNullOrEmpty(number1))
                 {
                     Console.Clear();
@@ -379,7 +380,7 @@ namespace Calculator_of_the_5th_grader
                 }
 
                 Console.WriteLine($"Введите второе число используя алфавит: ({ShowList(alphabet, ", ")})");
-                number2 = Console.ReadLine();
+                string number2 = Console.ReadLine();
                 if (string.IsNullOrEmpty(number2))
                 {
                     Console.Clear();
@@ -397,10 +398,143 @@ namespace Calculator_of_the_5th_grader
                     continue;
                 }
 
+                number1 = number1.PadLeft(number2.Length);
+                number2 = number2.PadLeft(number1.Length);
+
+                string transfers = new string(' ', number2.Length);
+                string result = new string(' ', number2.Length + 1);
+
+                Console.Clear();
+                Console.WriteLine("Q - Вернутся в меню\nR - Начать заново\nEnter - Следующий шаг");
+                Console.WriteLine($"\n  {number1}\n+ {number2}");
+                Console.WriteLine("\nНайдём их сумму столбиком");
+
+                key = WaitKey(new[] { "Q", "R", "Enter" });
+                if (key == "Q")
+                    break;
+                if (key == "R")
+                    continue;
+
+                for (int i = number1.Length - 1; i >= 0; i--)
+                {
+                    (char sum, char transfer) = Sum(transfers[i], number1[i], number2[i], numberSystem);
+                    if (i > 0)
+                    {
+                        transfers = ReplaceCharAtIndex(transfers, i - 1, transfer);
+                        result = ReplaceCharAtIndex(result, i + 1, sum);
+                    }
+                    else
+                    {
+                        result = ReplaceCharAtIndex(result, i + 1, sum);
+                        result = ReplaceCharAtIndex(result, i, transfer);
+                    }
+                    Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                    Console.WriteLine($"\n  {transfers}\n  {number1}\n+ {number2}\n {result}");
+                    if (transfers[i] == ' ')
+                    {
+                        if (number1[i] == ' ' || number2[i] == ' ')
+                            Console.WriteLine($"\nПеренесём в ответ {number2.Length - i}-ый разряд {(number2[i] == ' ' ? "первого" : "второго")} числа");
+                        else
+                            Console.WriteLine($"\nСуммируем {number2.Length - i}-ые разряды чисел. {number1[i]} + {number2[i]} = {transfer}{sum}");
+                    }
+                    else
+                    {
+                        if (number1[i] == ' ' || number2[i] == ' ')
+                            Console.WriteLine($"\nСуммируем перенос и {number2.Length - i}-ый разряд {(number2[i] == ' ' ? "первого" : "второго")} числа. {transfers[i]} + {(number2[i] == ' ' ? number1[i] : number2[i])} = {transfer}{sum}");
+                        else
+                            Console.WriteLine($"\nСуммируем перенос и {number2.Length - i}-ые разряды чисел. {transfers[i]} + {number1[i]} + {number2[i]} = {transfer}{sum}");
+                    }
+
+                    if (transfer == '1')
+                    {
+                        if (i > 0)
+                            Console.WriteLine("\nТак как сумма цифр двухзначная, то второй разряд суммы переносим над следующим разрядом числа");
+                        else
+                            Console.WriteLine("\nТак как сумма цифр двухзначная, а разряд последний, то второй разряд суммы переносим на следующй разряд ответа");
+                    }
+
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
+                    if (key == "Q")
+                    {
+                        exit = true;
+                        break;
+                    }
+                    if (key == "R")
+                    {
+                        restart = true;
+                        break;
+                    }
+                }
+                if (exit)
+                    break;
+                if (restart)
+                    continue;
+
+                Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                Console.WriteLine($"\n{number1.Replace(" ","")} + {number2.Replace(" ","")} = {result.Replace(" ", "")}\n");
+                Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
                 key = WaitKey(new[] { "Q", "R" });
                 if (key == "Q")
                     break;
+                Console.Clear();
             }
+        }
+
+        static (char, char) Sum(char transferIn, char number1, char number2, int numberSystem)
+        {
+            char sum;
+            char transferOut = ' ';
+            List<char> alphabet = Alphabet(numberSystem);
+            int indexSum;
+
+            if (transferIn == ' ')
+            {
+                if (number1 == ' ')
+                    sum = number2;
+                else if (number2 == ' ')
+                    sum = number1;
+                else
+                {
+                    indexSum = alphabet.IndexOf(number1) + alphabet.IndexOf(number2);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+            }
+            else
+            {
+                if (number1 == ' ' && number2 == ' ')
+                    sum = transferOut;
+                if (number1 == ' ')
+                {
+                    indexSum = 1 + alphabet.IndexOf(number2);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+                if (number2 == ' ')
+                {
+                    indexSum = 1 + alphabet.IndexOf(number1);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+                else
+                {
+                    indexSum = 1 + alphabet.IndexOf(number1) + alphabet.IndexOf(number2);
+                    transferOut = indexSum >= numberSystem ? '1' : ' ';
+                    sum = alphabet[indexSum % numberSystem];
+                }
+            }
+
+            return (sum, transferOut);
+        }
+
+        static string ReplaceCharAtIndex(string original, int index, char newChar)
+        {
+            char[] chars = original.ToCharArray();
+
+            chars[index] = newChar;
+
+            return new string(chars);
         }
 
         static string ShowList<T>(List<T> list, string split)
