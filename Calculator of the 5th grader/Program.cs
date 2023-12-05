@@ -584,6 +584,56 @@ namespace Calculator_of_the_5th_grader
                     Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
                     Console.WriteLine($"\n  {takeOut}\n  {number1}\n- {number2}\n  {result}\n");
 
+                    if (number2[i] != ' ')
+                    {
+                        if (alphabet.IndexOf(number1[i]) > alphabet.IndexOf(number2[i]))
+                        {
+                            if (takeOut[i] == ' ')
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел.\n{number1[i]} - {number2[i]} = {result[i]}");
+                            else
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел с учётом заимствования.\n({number1[i]} - 1) - {number2[i]} = {result[i]}");
+                        }
+                        else if (alphabet.IndexOf(number1[i]) == alphabet.IndexOf(number2[i]))
+                        {
+                            if (takeOut[i] == ' ')
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел.\n{number1[i]} - {number2[i]} = {result[i]}");
+                            else if (takeOut[i] == '*')
+                            {
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел с учётом заимствования, но так как цифра первого числа будеть меньше второго, то заимствуем 10 и следующего разряда.\n((10 + {number1[i]}) - 1) - {number2[i]} = {result[i]}");
+                                if (takeOut[i - 1] == alphabet[numberSystem - 1])
+                                    Console.WriteLine($"\nТак как цифра следующего разряда первого числа равна 0, то заимствуем 10 из следующего разряда, но оставляем над разрядам с 0-ом цифру {alphabet[numberSystem - 1]}. И повторяем так пока череда 0-ей подрят не закончится");
+                            }
+                            else
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел учётом дополнения.\n({number1[i]} + {alphabet[numberSystem - 1]}) - {number2[i]} = {result[i]}");
+                        }
+                        else
+                        {
+                            if (takeOut[i] == ' ')
+                            {
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел, но так как цифра первого числа меньше второго, то заимствуем 10 и следующего разряда.\n(10 + {number1[i]}) - {number2[i]} = {result[i]}");
+                                if (takeOut[i - 1] == alphabet[numberSystem - 1])
+                                    Console.WriteLine($"\nТак как цифра следующего разряда первого числа равна 0, то заимствуем 10 из следующего разряда, но оставляем над разрядам с 0-ом цифру {alphabet[numberSystem - 1]}. И повторяем так пока череда 0-ей подрят не закончится");
+                            }
+                            else if (takeOut[i] == '*')
+                            {
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел с учётом заимствования, но так как цифра первого числа меньше второго, то заимствуем 10 и следующего разряда.\n((10 + {number1[i]}) - 1) - {number2[i]} = {result[i]}");
+                                if (takeOut[i - 1] == alphabet[numberSystem - 1])
+                                    Console.WriteLine($"\nТак как цифра следующего разряда первого числа равна 0, то заимствуем 10 из следующего разряда, но оставляем над разрядам с 0-ом цифру {alphabet[numberSystem - 1]}. И повторяем так пока череда 0-ей подрят не закончится");
+                            }
+                            else
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел учётом дополнения.\n({number1[i]} + {alphabet[numberSystem - 1]}) - {number2[i]} = {result[i]}");
+                        }
+                    }
+                    else
+                    {
+                        if (takeOut[i] == ' ')
+                            Console.WriteLine($"Переписываем цифру из {number1.Length - i}-го разряда числа в ответ");
+                        else if (takeOut[i] == '*')
+                            Console.WriteLine($"Переписываем цифру из {number1.Length - i}-го разряда числа в ответ с учётом заимствования");
+                        else
+                            Console.WriteLine($"Переписываем цифру из {number1.Length - i}-го разряда числа в ответ с учётом дополнения");
+                    }
+
                     key = WaitKey(new[] { "Q", "R", "Enter" });
                     if (key == "Q")
                     {
