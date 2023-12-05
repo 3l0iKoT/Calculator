@@ -39,6 +39,7 @@ namespace Calculator_of_the_5th_grader
                                 Addition();
                                 break;
                             case 4:
+                                Subtraction();
                                 break;
                             case 5:
                                 break;
@@ -481,6 +482,191 @@ namespace Calculator_of_the_5th_grader
             }
         }
 
+        static void Subtraction()
+        {
+            while (true)
+            {
+                bool exit = false;
+                bool restart = false;
+                int numberSystem;
+                string key;
+                Console.Clear();
+                Console.WriteLine("Введите систему счисления для чисел в диапозоне от 2 до 50");
+                if (!int.TryParse(Console.ReadLine(), out numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Число введено не корректно");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (numberSystem < 2 || numberSystem > 50)
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Система счисления должна быть в диапозоне от 2 до 50. {numberSystem} не в диапозоне [2; 50]");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                List<char> alphabet = Alphabet(numberSystem);
+
+                Console.WriteLine($"Введите первое число используя алфавит: ({ShowList(alphabet, ", ")})");
+                string number1 = Console.ReadLine();
+                if (string.IsNullOrEmpty(number1))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Введено пустое число");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (!CorrectNumber(number1, numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Число {number1} использует цифры не из алфавита\n({ShowList(alphabet, ", ")})");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                Console.WriteLine($"Введите второе число используя алфавит: ({ShowList(alphabet, ", ")})");
+                string number2 = Console.ReadLine();
+                if (string.IsNullOrEmpty(number2))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Введено пустое число");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+                if (!CorrectNumber(number2, numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine($"Число {number2} использует цифры не из алфавита\n({ShowList(alphabet, ", ")})");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                if (!FirstNumberGreaterSecond(number1, number2, numberSystem))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Первое число должно быть больше второго");
+                    Console.WriteLine("\nНажмите на любую клавишу, что бы начать заново");
+                    Console.ReadKey();
+                    continue;
+                }
+
+                number1 = number1.PadLeft(number2.Length);
+                number2 = number2.PadLeft(number1.Length);
+
+                string result = new string(' ', number2.Length);
+                string takeOut = new string(' ', number2.Length);
+
+                Console.Clear();
+                Console.WriteLine("Q - Вернутся в меню\nR - Начать заново\nEnter - Следующий шаг");
+                Console.WriteLine($"\n  {number1}\n- {number2}");
+                Console.WriteLine("\nНайдём их разность столбиком");
+
+                key = WaitKey(new[] { "Q", "R", "Enter" });
+                if (key == "Q")
+                    break;
+                if (key == "R")
+                    continue;
+
+                char sub;
+
+                for (int i = number1.Length - 1; i >= 0; i--)
+                {
+                    (takeOut, sub) = Sub(takeOut, number1, number2[i], i, numberSystem);
+                    result = ReplaceCharAtIndex(result, i, sub);
+
+                    Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                    Console.WriteLine($"\n  {takeOut}\n  {number1}\n- {number2}\n  {result}\n");
+
+                    if (number2[i] != ' ')
+                    {
+                        if (alphabet.IndexOf(number1[i]) > alphabet.IndexOf(number2[i]))
+                        {
+                            if (takeOut[i] == ' ')
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел.\n{number1[i]} - {number2[i]} = {result[i]}");
+                            else
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел с учётом заимствования.\n({number1[i]} - 1) - {number2[i]} = {result[i]}");
+                        }
+                        else if (alphabet.IndexOf(number1[i]) == alphabet.IndexOf(number2[i]))
+                        {
+                            if (takeOut[i] == ' ')
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел.\n{number1[i]} - {number2[i]} = {result[i]}");
+                            else if (takeOut[i] == '*')
+                            {
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел с учётом заимствования, но так как цифра первого числа будеть меньше второго, то заимствуем 10 и следующего разряда.\n((10 + {number1[i]}) - 1) - {number2[i]} = {result[i]}");
+                                if (takeOut[i - 1] == alphabet[numberSystem - 1])
+                                    Console.WriteLine($"\nТак как цифра следующего разряда первого числа равна 0, то заимствуем 10 из следующего разряда, но оставляем над разрядам с 0-ом цифру {alphabet[numberSystem - 1]}. И повторяем так пока череда 0-ей подрят не закончится");
+                            }
+                            else
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел учётом дополнения.\n({number1[i]} + {alphabet[numberSystem - 1]}) - {number2[i]} = {result[i]}");
+                        }
+                        else
+                        {
+                            if (takeOut[i] == ' ')
+                            {
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел, но так как цифра первого числа меньше второго, то заимствуем 10 и следующего разряда.\n(10 + {number1[i]}) - {number2[i]} = {result[i]}");
+                                if (takeOut[i - 1] == alphabet[numberSystem - 1])
+                                    Console.WriteLine($"\nТак как цифра следующего разряда первого числа равна 0, то заимствуем 10 из следующего разряда, но оставляем над разрядам с 0-ом цифру {alphabet[numberSystem - 1]}. И повторяем так пока череда 0-ей подрят не закончится");
+                            }
+                            else if (takeOut[i] == '*')
+                            {
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел с учётом заимствования, но так как цифра первого числа меньше второго, то заимствуем 10 и следующего разряда.\n((10 + {number1[i]}) - 1) - {number2[i]} = {result[i]}");
+                                if (takeOut[i - 1] == alphabet[numberSystem - 1])
+                                    Console.WriteLine($"\nТак как цифра следующего разряда первого числа равна 0, то заимствуем 10 из следующего разряда, но оставляем над разрядам с 0-ом цифру {alphabet[numberSystem - 1]}. И повторяем так пока череда 0-ей подрят не закончится");
+                            }
+                            else
+                                Console.WriteLine($"Находим разность цифр {number1.Length - i}-го разряда чисел учётом дополнения.\n({number1[i]} + {alphabet[numberSystem - 1]}) - {number2[i]} = {result[i]}");
+                        }
+                    }
+                    else
+                    {
+                        if (takeOut[i] == ' ')
+                            Console.WriteLine($"Переписываем цифру из {number1.Length - i}-го разряда числа в ответ");
+                        else if (takeOut[i] == '*')
+                            Console.WriteLine($"Переписываем цифру из {number1.Length - i}-го разряда числа в ответ с учётом заимствования");
+                        else
+                            Console.WriteLine($"Переписываем цифру из {number1.Length - i}-го разряда числа в ответ с учётом дополнения");
+                    }
+
+                    key = WaitKey(new[] { "Q", "R", "Enter" });
+                    if (key == "Q")
+                    {
+                        exit = true;
+                        break;
+                    }
+                    if (key == "R")
+                    {
+                        restart = true;
+                        break;
+                    }
+                }
+                if (exit)
+                    break;
+                if (restart)
+                    continue;
+
+                while (result[0] == '0')
+                {
+                    result = result.Substring(1);
+                }
+
+                Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                Console.WriteLine($"\n{number1.Replace(" ", "")} - {number2.Replace(" ", "")} = {result.Replace(" ", "")}\n");
+                Console.WriteLine("══════════════════════════════════════════════════════════════════════════════════════════════════════════════");
+                Console.WriteLine("Q - Вернутся в меню\nR - Начать заново");
+                key = WaitKey(new[] { "Q", "R" });
+                if (key == "Q")
+                    break;
+                Console.Clear();
+            }
+        }
+
         static (char, char) Sum(char transferIn, char number1, char number2, int numberSystem)
         {
             char sum;
@@ -526,6 +712,119 @@ namespace Calculator_of_the_5th_grader
             }
 
             return (sum, transferOut);
+        }
+
+        static (string, char) Sub(string takeOut, string number1, char charNumber2, int index, int numberSystem)
+        {
+            var alphabet = Alphabet(numberSystem);
+            char sub;
+            int takeOutIndex;
+            if (charNumber2 != ' ')
+            {
+                if (alphabet.IndexOf(number1[index]) > alphabet.IndexOf(charNumber2))
+                {
+                    if (takeOut[index] == ' ')
+                        sub = alphabet[alphabet.IndexOf(number1[index]) - alphabet.IndexOf(charNumber2)];
+                    else
+                        sub = alphabet[(alphabet.IndexOf(number1[index]) - 1) - alphabet.IndexOf(charNumber2)];
+                }
+                else if (alphabet.IndexOf(number1[index]) == alphabet.IndexOf(charNumber2))
+                {
+                    if (takeOut[index] == ' ')
+                        sub = '0';
+                    else if (takeOut[index] == '*')
+                    {
+                        sub = alphabet[(alphabet.IndexOf(number1[index]) - 1 + numberSystem) - alphabet.IndexOf(charNumber2)];
+
+                        takeOutIndex = index - 1;
+
+                        do
+                        {
+                            if (number1[takeOutIndex] == '0')
+                                takeOut = ReplaceCharAtIndex(takeOut, takeOutIndex, alphabet[numberSystem - 1]);
+                            else
+                            {
+                                takeOut = ReplaceCharAtIndex(takeOut, takeOutIndex, '*');
+                                break;
+                            }
+
+                            if (takeOutIndex > 0)
+                                takeOutIndex--;
+                        } while (number1[takeOutIndex] == '0');
+                        if (takeOut[takeOutIndex + 1] == alphabet[numberSystem - 1])
+                            takeOut = ReplaceCharAtIndex(takeOut, takeOutIndex, '*');
+                    }
+                    else
+                        sub = alphabet[numberSystem - 1];
+                }
+                else
+                {
+                    if (takeOut[index] == ' ')
+                        sub = alphabet[(alphabet.IndexOf(number1[index])+ numberSystem) - alphabet.IndexOf(charNumber2)];
+                    else if (takeOut[index] == '*')
+                        sub = alphabet[(alphabet.IndexOf(number1[index]) - 1 + numberSystem) - alphabet.IndexOf(charNumber2)];
+                    else
+                        sub = alphabet[(numberSystem - 1) - alphabet.IndexOf(charNumber2)];
+
+                    if (takeOut[index] == ' ' || takeOut[index] == '*')
+                    {
+                        takeOutIndex = index - 1;
+
+                        do
+                        {
+                            if (number1[takeOutIndex] == '0')
+                                takeOut = ReplaceCharAtIndex(takeOut, takeOutIndex, alphabet[numberSystem - 1]);
+                            else
+                            {
+                                takeOut = ReplaceCharAtIndex(takeOut, takeOutIndex, '*');
+                                break;
+                            }
+
+                            if (takeOutIndex > 0)
+                                takeOutIndex--;
+                        } while (number1[takeOutIndex] == '0');
+                        if (takeOut[takeOutIndex + 1] == alphabet[numberSystem - 1])
+                            takeOut = ReplaceCharAtIndex(takeOut, takeOutIndex, '*');
+                    }
+                }
+            }
+            else
+            {
+                if (takeOut[index] == ' ')
+                    sub = number1[index];
+                else if (takeOut[index] == '*')
+                    sub = alphabet[alphabet.IndexOf(number1[index]) - 1];
+                else
+                    sub = alphabet[numberSystem - 1];
+            }
+            return (takeOut, sub);
+        }
+
+        static bool FirstNumberGreaterSecond(string number1, string number2, int numberSystem)
+        {
+            var alphabet = Alphabet(numberSystem);
+            bool greater = false;
+            if (number1.Length > number2.Length)
+                return true;
+            else if (number1.Length == number2.Length)
+            {
+                for(int i = 0; i < number1.Length; i++)
+                {
+                    if (alphabet.IndexOf(number1[i]) == alphabet.IndexOf(number2[i]))
+                        continue;
+
+                    if (alphabet.IndexOf(number1[i]) > alphabet.IndexOf(number2[i]))
+                    {
+                        greater = true;
+                        break;
+                    }
+                    else
+                        break;
+                }
+            }
+            else
+                return false;
+            return greater;
         }
 
         static string ReplaceCharAtIndex(string original, int index, char newChar)
